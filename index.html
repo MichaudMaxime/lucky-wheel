@@ -51,7 +51,7 @@
       box-sizing: border-box;
     }
 
-    input, textarea, select {
+    input, textarea {
       user-select: text;
       -webkit-user-select: text;
     }
@@ -69,13 +69,6 @@
       padding-right: var(--sar);
     }
 
-    .glass-surface {
-      background: rgba(17, 24, 39, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
     .custom-scroll::-webkit-scrollbar {
       width: 4px;
     }
@@ -85,14 +78,15 @@
     }
 
     .pointer-shadow {
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
     }
   </style>
 </head>
 <body class="flex flex-col relative w-full h-[100dvh]">
 
+  <!-- Top bar -->
   <header class="w-full h-14 border-b border-gray-800/80 bg-gray-950/70 backdrop-blur-md px-4 flex items-center justify-between z-20 shrink-0">
-    <div id="brand-touch-area" class="flex items-center gap-2.5 cursor-pointer py-1 active:opacity-75 transition-opacity" title="Triple tap pour options avancées">
+    <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
         <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
@@ -101,9 +95,8 @@
       </div>
       <div class="flex items-center gap-1.5">
         <h1 class="text-sm font-bold text-white tracking-tight flex items-center gap-1.5">
-          Lucky Wheel
-          <!-- Micro-stealth indicator: stays transparent unless rigged mode is active -->
-          <span id="stealth-indicator" class="w-1.5 h-1.5 rounded-full bg-transparent inline-block" title="Statut"></span>
+          Tirage au Sort
+          <span id="stealth-indicator" class="w-1.5 h-1.5 rounded-full bg-transparent inline-block"></span>
         </h1>
       </div>
     </div>
@@ -129,10 +122,10 @@
 
   <main class="flex-1 relative w-full overflow-hidden">
     
-    <!-- VIEW 1: WHEEL (Default active mobile screen) -->
+    <!-- VIEW 1: WHEEL -->
     <section id="view-wheel" class="absolute inset-0 flex flex-col items-center justify-between px-4 py-3 z-10">
       
-      <!-- Quick status pills -->
+      <!-- Quick status pill -->
       <div class="w-full flex items-center justify-between max-w-sm px-1 text-xs">
         <div class="flex items-center gap-1.5 bg-gray-900/80 px-2.5 py-1 rounded-full border border-gray-800 text-gray-400 font-medium">
           <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,14 +141,14 @@
         </button>
       </div>
 
-      <!-- Wheel Responsive Container -->
-      <div class="relative w-full max-w-[360px] sm:max-w-[420px] aspect-square my-auto flex items-center justify-center">
-        <!-- Ambient outer glow -->
+      <!-- Wheel Container -->
+      <div class="relative w-full max-w-[340px] sm:max-w-[400px] aspect-square my-auto flex items-center justify-center">
+        <!-- Glow -->
         <div class="absolute inset-4 rounded-full bg-gradient-to-tr from-indigo-600/20 to-violet-600/20 blur-xl pointer-events-none"></div>
 
-        <!-- Top Pointer Needle -->
+        <!-- Needle -->
         <div class="absolute -top-1 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-shadow">
-          <svg class="w-8 h-8 sm:w-10 sm:h-10 text-amber-400 filter drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
+          <svg class="w-8 h-8 text-amber-400 filter drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 21.5L3.5 6.5h17L12 21.5z" />
           </svg>
           <div class="w-2.5 h-2.5 bg-amber-100 rounded-full -mt-6 ring-2 ring-amber-500"></div>
@@ -164,30 +157,30 @@
         <!-- High-DPI Canvas -->
         <canvas id="roulette-canvas" class="relative z-10 w-full h-full rounded-full shadow-2xl border-4 border-gray-800 bg-gray-950"></canvas>
 
-        <!-- Center Hub Button (supports tap + long press for secret trigger) -->
-        <button id="spin-hub-btn" class="absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 border-4 border-gray-900 shadow-xl shadow-indigo-950/80 active:scale-95 transition-transform flex flex-col items-center justify-center cursor-pointer">
-          <span class="text-white font-black text-xs sm:text-sm tracking-wider uppercase drop-shadow">SPIN</span>
+        <!-- Center Hub Button -->
+        <button id="spin-hub-btn" class="absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 border-4 border-gray-900 shadow-xl shadow-indigo-950/80 active:scale-95 transition-transform flex flex-col items-center justify-center cursor-pointer">
+          <span class="text-white font-black text-xs tracking-wider uppercase drop-shadow">SPIN</span>
         </button>
       </div>
 
-      <!-- Action Button Area for Thumb Reach -->
+      <!-- Action Button -->
       <div class="w-full max-w-sm flex flex-col items-center gap-2 pb-2">
         <button id="main-spin-btn" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 active:from-indigo-700 active:to-violet-700 text-white font-bold text-base shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all">
           <svg id="spin-loader" class="w-5 h-5 animate-spin hidden" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
           </svg>
-          <span id="spin-btn-text">Tourner la Roulette</span>
+          <span id="spin-btn-text">Lancer le tirage</span>
         </button>
       </div>
     </section>
 
-    <!-- VIEW 2: PARTICIPANTS LIST & BULK INPUT -->
+    <!-- VIEW 2: PARTICIPANTS -->
     <section id="view-participants" class="absolute inset-0 flex flex-col bg-gray-950 px-4 py-3 z-10 hidden overflow-hidden">
       
-      <!-- Add single participant input -->
+      <!-- Input -->
       <div class="flex gap-2 mb-3 shrink-0">
-        <input type="text" id="input-name" placeholder="Nouveau participant..." class="flex-1 bg-gray-900 border border-gray-800 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-colors">
+        <input type="text" id="input-name" placeholder="Ajouter un prénom..." class="flex-1 bg-gray-900 border border-gray-800 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-colors">
         <button id="btn-add-single" class="px-4 py-2.5 bg-indigo-600 active:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition-all flex items-center gap-1.5 shrink-0">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
@@ -196,47 +189,48 @@
         </button>
       </div>
 
-      <!-- Quick bulk paste toggle -->
+      <!-- Bulk paste toggle -->
       <details class="mb-3 bg-gray-900/60 rounded-xl border border-gray-800/80 shrink-0">
         <summary class="px-3 py-2 text-xs font-medium text-indigo-400 cursor-pointer flex items-center justify-between">
           <span class="flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-            Coller une liste complète (un par ligne)
+            Coller une liste (un par ligne)
           </span>
           <svg class="w-3 h-3 transition-transform text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </summary>
         <div class="p-3 pt-0 flex flex-col gap-2">
-          <textarea id="bulk-names-area" rows="3" placeholder="Emma&#10;Lucas&#10;Sarah" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-xs text-white placeholder-gray-600 outline-none focus:border-indigo-500"></textarea>
+          <textarea id="bulk-names-area" rows="3" placeholder="Copiez/collez les prénoms ici..." class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-xs text-white placeholder-gray-600 outline-none focus:border-indigo-500"></textarea>
           <div class="flex justify-end gap-2">
-            <button id="btn-import-bulk" class="px-3 py-1.5 bg-indigo-600/80 active:bg-indigo-600 text-white rounded-lg text-xs font-semibold">
-              Remplacer tout
+            <button id="btn-import-bulk" class="px-3 py-1.5 bg-indigo-600 active:bg-indigo-700 text-white rounded-lg text-xs font-semibold">
+              Importer la liste
             </button>
           </div>
         </div>
       </details>
 
-      <!-- Participants management title & clear -->
+      <!-- Header actions -->
       <div class="flex items-center justify-between pb-2 border-b border-gray-800/80 shrink-0">
-        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Liste active (<span id="list-count-badge">0</span>)</span>
+        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Participants (<span id="list-count-badge">0</span>)</span>
         <button id="btn-clear-all" class="text-xs text-rose-400 active:text-rose-300 flex items-center gap-1 py-1">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          Effacer tout
+          Tout effacer
         </button>
       </div>
 
-      <!-- Scrollable list of names -->
+      <!-- List -->
       <div id="participants-container" class="flex-1 overflow-y-auto custom-scroll py-2 space-y-1.5">
         <!-- Populated via JS -->
       </div>
     </section>
   </main>
 
+  <!-- Bottom Navigation -->
   <nav class="w-full h-16 border-t border-gray-800/80 bg-gray-950/80 backdrop-blur-lg grid grid-cols-2 z-20 shrink-0">
     <button id="nav-btn-wheel" class="flex flex-col items-center justify-center gap-1 text-indigo-400 transition-colors">
       <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -250,55 +244,12 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
       </svg>
       <span class="text-[11px] font-semibold tracking-wide">Participants</span>
-      <span id="nav-badge" class="absolute top-2 right-[36%] w-2 h-2 rounded-full bg-indigo-500 hidden"></span>
     </button>
   </nav>
 
-  <div id="secret-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="glass-surface bg-gray-900 border-t sm:border border-gray-800 w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl relative animate-in fade-in duration-200">
-      
-      <div class="flex items-center justify-between pb-3 border-b border-gray-800">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-          <h2 class="text-sm font-bold text-white tracking-wide">Mode Forcé (Discret)</h2>
-        </div>
-        <button id="btn-close-secret" class="p-1.5 rounded-lg text-gray-400 active:text-white">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <div class="py-4 space-y-3.5">
-        <p class="text-xs text-gray-400 leading-relaxed">
-          Sélectionnez le gagnant forcé pour le prochain tirage. L'animation s'arrêtera de façon parfaitement naturelle dessus.
-        </p>
-
-        <div class="space-y-1.5">
-          <label class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Résultat prévu :</label>
-          <select id="rigged-select" class="w-full bg-gray-950 border border-gray-700 text-white rounded-xl px-3 py-3 text-sm focus:border-indigo-500 outline-none">
-            <option value="">🎲 Tirage 100% aléatoire (normal)</option>
-          </select>
-        </div>
-
-        <div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800/80 text-[11px] text-gray-400">
-          <span class="text-gray-300 font-semibold">Rappel déclencheur mobile :</span><br>
-          Faites un appui long de 1.2s sur le bouton central "SPIN" ou 3 taps rapides sur le logo.
-        </div>
-      </div>
-
-      <div class="pt-2 flex justify-end gap-2">
-        <button id="btn-apply-secret" class="w-full py-3 bg-indigo-600 active:bg-indigo-700 rounded-xl text-white font-semibold text-sm transition-all shadow-md">
-          Confirmer
-        </button>
-      </div>
-    </div>
-  </div>
-
+  <!-- Winner Modal -->
   <div id="winner-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
-    <div class="glass-surface bg-gray-900 border border-indigo-500/30 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl relative">
+    <div class="bg-gray-900 border border-indigo-500/30 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl relative">
       
       <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 p-0.5 shadow-xl shadow-amber-500/20 mb-4 flex items-center justify-center">
         <div class="w-full h-full bg-gray-950 rounded-[14px] flex items-center justify-center">
@@ -328,18 +279,18 @@
   </div>
 
   <script>
-    // State management
-    let participants = ["Emma", "Lucas", "Sarah", "Alex", "Thomas", "Léa", "Maxime", "Chloé"];
+    // State management - Empty initially as requested
+    let participants = [];
     let riggedWinner = null;
     let isSpinning = false;
-    let currentRotation = 0; // Current rotation in radians
+    let currentRotation = 0;
     let soundEnabled = true;
     let hapticEnabled = true;
     let audioCtx = null;
     let lastTickIndex = -1;
     let currentWinner = "";
 
-    // Vibrant theme colors for sectors
+    // Vibrant colors for sectors
     const palette = [
       '#4f46e5', '#06b6d4', '#10b981', '#f59e0b',
       '#ec4899', '#8b5cf6', '#ef4444', '#14b8a6',
@@ -366,13 +317,6 @@
     const spinHubBtn = document.getElementById('spin-hub-btn');
     const spinLoader = document.getElementById('spin-loader');
     const spinBtnText = document.getElementById('spin-btn-text');
-
-    // Secret modal & indicators
-    const secretModal = document.getElementById('secret-modal');
-    const btnCloseSecret = document.getElementById('btn-close-secret');
-    const btnApplySecret = document.getElementById('btn-apply-secret');
-    const riggedSelect = document.getElementById('rigged-select');
-    const brandTouchArea = document.getElementById('brand-touch-area');
     const stealthIndicator = document.getElementById('stealth-indicator');
 
     // Winner modal
@@ -407,7 +351,7 @@
     }
 
     function playTick() {
-      triggerHaptic(12);
+      triggerHaptic(10);
       if (!soundEnabled) return;
       try {
         initAudio();
@@ -489,10 +433,12 @@
         ctx.stroke();
 
         ctx.fillStyle = '#6b7280';
-        ctx.font = '600 14px Inter, sans-serif';
+        ctx.font = '600 13px Inter, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('Ajoutez des participants', center, center);
+        ctx.fillText('Aucun participant', center, center - 10);
+        ctx.font = '400 11px Inter, sans-serif';
+        ctx.fillText('Ajoutez au moins 2 noms', center, center + 12);
         return;
       }
 
@@ -518,7 +464,6 @@
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
         ctx.stroke();
 
-        // Label rendering
         ctx.save();
         ctx.rotate(start + sliceAngle / 2);
         ctx.textAlign = 'right';
@@ -539,7 +484,6 @@
         ctx.restore();
       }
 
-      // Outer rim
       ctx.beginPath();
       ctx.arc(0, 0, radius, 0, 2 * Math.PI);
       ctx.lineWidth = 4;
@@ -558,7 +502,7 @@
 
       const total = participants.length;
       const sliceAngle = (2 * Math.PI) / total;
-      const pointerAngle = (3 * Math.PI) / 2; // Pointer is at the top (270 degrees)
+      const pointerAngle = (3 * Math.PI) / 2; // Haut (270 deg)
 
       let targetIndex;
       if (riggedWinner && participants.includes(riggedWinner)) {
@@ -567,8 +511,8 @@
         targetIndex = Math.floor(Math.random() * total);
       }
 
-      // Safe margin inside the sector so landing looks natural and not dead-center
-      const jitter = (Math.random() - 0.5) * (sliceAngle * 0.6);
+      // Variation naturelle dans le secteur
+      const jitter = (Math.random() - 0.5) * (sliceAngle * 0.5);
       const targetCenterAngle = targetIndex * sliceAngle + sliceAngle / 2;
       const normalizedCurrent = currentRotation % (2 * Math.PI);
 
@@ -577,7 +521,6 @@
         delta += 2 * Math.PI;
       }
 
-      // 6 to 8 full spins
       const fullRotations = (6 + Math.floor(Math.random() * 3)) * (2 * Math.PI);
       const totalDelta = fullRotations + delta;
       const startAngle = currentRotation;
@@ -595,7 +538,6 @@
 
         currentRotation = startAngle + totalDelta * eased;
 
-        // Sound tick & haptic check
         const pointerRef = (pointerAngle - currentRotation) % (2 * Math.PI);
         const positiveRef = (pointerRef + 2 * Math.PI) % (2 * Math.PI);
         const currentSlice = Math.floor(positiveRef / sliceAngle);
@@ -633,7 +575,7 @@
         mainSpinBtn.classList.add('opacity-75');
       } else {
         spinLoader.classList.add('hidden');
-        spinBtnText.textContent = 'Tourner la Roulette';
+        spinBtnText.textContent = 'Lancer le tirage';
         mainSpinBtn.classList.remove('opacity-75');
       }
     }
@@ -660,6 +602,18 @@
       listCountBadge.textContent = participants.length;
       participantsContainer.innerHTML = '';
 
+      if (participants.length === 0) {
+        participantsContainer.innerHTML = `
+          <div class="h-44 flex flex-col items-center justify-center text-center p-4 border border-dashed border-gray-800 rounded-2xl">
+            <svg class="w-8 h-8 text-gray-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+            <p class="text-xs font-semibold text-gray-400">Aucun participant pour le moment</p>
+            <p class="text-[11px] text-gray-600 mt-0.5">Écrivez un prénom ci-dessus pour démarrer.</p>
+          </div>
+        `;
+      }
+
       if (participants.length < 2) {
         mainSpinBtn.disabled = true;
         spinHubBtn.disabled = true;
@@ -672,13 +626,17 @@
 
       participants.forEach((name, index) => {
         const item = document.createElement('div');
-        item.className = 'flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800/80';
+        const isRigged = (riggedWinner === name);
+        item.className = 'participant-item flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800/80 active:bg-gray-800/60 transition-colors cursor-pointer select-none';
+        item.dataset.index = index;
+
         const color = palette[index % palette.length];
 
         item.innerHTML = `
-          <div class="flex items-center gap-3 truncate">
+          <div class="flex items-center gap-3 truncate pointer-events-none">
             <span class="w-3 h-3 rounded-full shrink-0" style="background-color: ${color}"></span>
             <span class="text-sm font-medium text-gray-200 truncate">${escapeHtml(name)}</span>
+            ${isRigged ? `<span class="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-sm shrink-0" title="Choisi"></span>` : ''}
           </div>
           <button data-index="${index}" class="btn-delete p-1 text-gray-500 active:text-rose-400" aria-label="Supprimer">
             <svg class="w-4 h-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -689,7 +647,7 @@
         participantsContainer.appendChild(item);
       });
 
-      populateRiggedDropdown();
+      updateStealthIndicator();
       drawWheel();
     }
 
@@ -706,7 +664,6 @@
         const removed = participants.splice(index, 1)[0];
         if (riggedWinner === removed) {
           riggedWinner = null;
-          updateStealthIndicator();
         }
         renderParticipants();
         triggerHaptic(25);
@@ -719,103 +676,55 @@
       })[s]);
     }
 
-    function populateRiggedDropdown() {
-      riggedSelect.innerHTML = '<option value="">🎲 Tirage 100% aléatoire (normal)</option>';
-      participants.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p;
-        opt.textContent = `🎯 Forcer la victoire : ${p}`;
-        if (riggedWinner === p) {
-          opt.selected = true;
-        }
-        riggedSelect.appendChild(opt);
-      });
-      updateStealthIndicator();
-    }
-
     function updateStealthIndicator() {
       if (riggedWinner && participants.includes(riggedWinner)) {
-        // Discrete subtle violet micro-dot
-        stealthIndicator.className = "w-1.5 h-1.5 rounded-full bg-indigo-500/40 inline-block";
+        stealthIndicator.className = "w-1.5 h-1.5 rounded-full bg-indigo-500/50 inline-block";
       } else {
         stealthIndicator.className = "w-1.5 h-1.5 rounded-full bg-transparent inline-block";
       }
     }
 
-    function openSecretModal() {
-      populateRiggedDropdown();
-      secretModal.classList.remove('hidden');
-      secretModal.classList.add('flex');
-      triggerHaptic([30, 40]);
-    }
+    // DISCRETE SELECTION VIA LONG PRESS DIRECTLY ON PARTICIPANT ROW
+    let pressTimer = null;
+    let longPressed = false;
 
-    function closeSecretModal() {
-      secretModal.classList.add('hidden');
-      secretModal.classList.remove('flex');
-    }
+    participantsContainer.addEventListener('touchstart', (e) => {
+      const item = e.target.closest('.participant-item');
+      if (!item || e.target.closest('.btn-delete')) return;
 
-    // Triple tap detector on brand header
-    let touchTaps = 0;
-    let tapTimeout = null;
-    brandTouchArea.addEventListener('click', () => {
-      touchTaps++;
-      clearTimeout(tapTimeout);
-      if (touchTaps >= 3) {
-        touchTaps = 0;
-        openSecretModal();
-      } else {
-        tapTimeout = setTimeout(() => { touchTaps = 0; }, 600);
-      }
-    });
+      const idx = parseInt(item.dataset.index, 10);
+      longPressed = false;
 
-    // Long press detector on central SPIN hub (1.2s)
-    let longPressTimer = null;
-    let isLongPress = false;
-
-    function startPress() {
-      isLongPress = false;
-      longPressTimer = setTimeout(() => {
-        isLongPress = true;
-        openSecretModal();
-      }, 1200);
-    }
-
-    function endPress(e) {
-      clearTimeout(longPressTimer);
-      if (!isLongPress && !isSpinning) {
-        spin();
-      }
-    }
-
-    spinHubBtn.addEventListener('mousedown', startPress);
-    spinHubBtn.addEventListener('mouseup', endPress);
-    spinHubBtn.addEventListener('touchstart', (e) => {
-      startPress();
+      pressTimer = setTimeout(() => {
+        longPressed = true;
+        const targetName = participants[idx];
+        if (riggedWinner === targetName) {
+          riggedWinner = null; // Toggle off if already selected
+        } else {
+          riggedWinner = targetName; // Silently designate
+        }
+        triggerHaptic([30, 40]);
+        renderParticipants();
+      }, 750);
     }, { passive: true });
 
-    spinHubBtn.addEventListener('touchend', (e) => {
-      endPress(e);
+    participantsContainer.addEventListener('touchend', () => {
+      clearTimeout(pressTimer);
     });
 
-    mainSpinBtn.addEventListener('click', spin);
-
-    // Bottom Navigation switching
-    navBtnWheel.addEventListener('click', () => {
-      viewWheel.classList.remove('hidden');
-      viewParticipants.classList.add('hidden');
-      navBtnWheel.className = 'flex flex-col items-center justify-center gap-1 text-indigo-400 transition-colors';
-      navBtnList.className = 'flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-gray-300 transition-colors relative';
-      resizeCanvas();
+    participantsContainer.addEventListener('touchmove', () => {
+      clearTimeout(pressTimer);
     });
 
-    navBtnList.addEventListener('click', () => {
-      viewWheel.classList.add('hidden');
-      viewParticipants.classList.remove('hidden');
-      navBtnList.className = 'flex flex-col items-center justify-center gap-1 text-indigo-400 transition-colors relative';
-      navBtnWheel.className = 'flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-gray-300 transition-colors';
+    // Delete handling
+    participantsContainer.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-delete')) {
+        const idx = parseInt(e.target.closest('.btn-delete').dataset.index, 10);
+        removeName(idx);
+      }
     });
 
-    // Participant inputs
+    // Inputs & buttons
     btnAddSingle.addEventListener('click', () => {
       addName(inputName.value);
       inputName.value = '';
@@ -826,13 +735,6 @@
       if (e.key === 'Enter') {
         addName(inputName.value);
         inputName.value = '';
-      }
-    });
-
-    participantsContainer.addEventListener('click', (e) => {
-      if (e.target.closest('.btn-delete')) {
-        const idx = parseInt(e.target.closest('.btn-delete').dataset.index, 10);
-        removeName(idx);
       }
     });
 
@@ -851,6 +753,7 @@
       participants = [];
       riggedWinner = null;
       renderParticipants();
+      triggerHaptic(20);
     });
 
     quickShuffleBtn.addEventListener('click', () => {
@@ -862,13 +765,23 @@
       triggerHaptic(20);
     });
 
-    // Secret modal handlers
-    btnCloseSecret.addEventListener('click', closeSecretModal);
-    btnApplySecret.addEventListener('click', () => {
-      riggedWinner = riggedSelect.value || null;
-      updateStealthIndicator();
-      closeSecretModal();
-      triggerHaptic(30);
+    mainSpinBtn.addEventListener('click', spin);
+    spinHubBtn.addEventListener('click', spin);
+
+    // Navigation tabs
+    navBtnWheel.addEventListener('click', () => {
+      viewWheel.classList.remove('hidden');
+      viewParticipants.classList.add('hidden');
+      navBtnWheel.className = 'flex flex-col items-center justify-center gap-1 text-indigo-400 transition-colors';
+      navBtnList.className = 'flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-gray-300 transition-colors relative';
+      resizeCanvas();
+    });
+
+    navBtnList.addEventListener('click', () => {
+      viewWheel.classList.add('hidden');
+      viewParticipants.classList.remove('hidden');
+      navBtnList.className = 'flex flex-col items-center justify-center gap-1 text-indigo-400 transition-colors relative';
+      navBtnWheel.className = 'flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-gray-300 transition-colors';
     });
 
     // Winner modal buttons
@@ -886,7 +799,7 @@
       winnerModal.classList.remove('flex');
     });
 
-    // Toggle controls
+    // Sound / Vibrate controls
     soundBtn.addEventListener('click', () => {
       soundEnabled = !soundEnabled;
       iconSoundOn.classList.toggle('hidden', !soundEnabled);
@@ -902,7 +815,7 @@
       if (hapticEnabled) triggerHaptic(35);
     });
 
-    // Lifecycle
+    // Init
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('load', () => {
       resizeCanvas();
